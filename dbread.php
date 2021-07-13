@@ -1,5 +1,5 @@
 <?php 
-required 'DBconnection.php';
+require 'DBconnection.php';
 
     function register($userName, $password){
     	$conn = connect();
