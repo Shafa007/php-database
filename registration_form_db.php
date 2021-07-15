@@ -1,85 +1,40 @@
-<?php 
-    include 'DBconnection.php';
-	$firstName =$lastName =$gender = $dobN = $religion = $presentAdd = $permanetAdd = $phoneNum = $email = $userName = $password = "";
+<?php
+    require 'DBinsert.php';
+	$username = $password = "";
 	$isValid = true;
 
-	$firstNameErr = $lastNameErr = $genderErr = $dobNErr = $religionErr = $presentAddErr = $permanetAddErr = $phoneNumErr = $emailErr = $userNameErr = $passwordErr = "";
+	$usernameErr  = $passwordErr = "";
 
 	$successfulMessage = $errorMessage = "";
 
 	if($_SERVER['REQUEST_METHOD'] === "POST") {
-		
-		$firstName = $_POST['firstname'];
-		$lastName = $_POST['lastname'];
-		$gender = $_POST['gender'];
-		$dobN = $_POST['dob'];
-		$religion = $_POST['religion'];
-		$presentAdd = $_POST['presentadd'];
-        $permanetAdd = $_POST['permanetadd'];
-        $phoneNum = $_POST['phonenum'];
-        $email = $_POST['email'];
 
-		$userName = $_POST['username'];
+		$username = $_POST['username'];
 		$password = $_POST['password'];
-
-		if(empty($firstName)) {
-			$firstNameErr = "First name can not be empty!";
-			$isValid = false;
-		}
-		if(empty($lastName)) {
-			$lastNameErr = "Last name can not be empty!";
-			$isValid = false;
-		}
-		if(empty($gender)) {
-			$genderErr = "Gender can not be empty!";
-			$isValid = false;
-		}
-		if(empty($dobN)) {
-			$dobNErr = "Date of Birth can not be empty!";
-			$isValid = false;
-		}
-		if(empty($religion)) {
-			$religionErr = "Religion can not be empty!";
-			$isValid = false;
-		}
-		if(empty($presentAdd )) {
-			$presentAddErr = "Present Address can not be empty!";
-			$isValid = false;
-		}
-		if(empty($permanetAdd )) {
-			$permanetAddErr = "Permanet Address can not be empty!";
-			$isValid = false;
-		}
-		if(empty($phoneNum)) {
-			$phoneNumErr = "Phone Number can not be empty!";
-			$isValid = false;
-		}
-		if(empty($email)) {
-			$emailErr = "E-mail can not be empty!";
-			$isValid = false;
-		}
-		if(empty($userName)) {
-			$userNameErr = "Username can not be empty!";
+		
+		if(empty($username)) {
+			$usernameErr = "Username can not be empty!";
 			$isValid = false;
 		}
 		if(empty($password)) {
 			$passwordErr = "Password can not be empty!";
 			$isValid = false;
 		}
+
 		if($isValid) {
-			$firstName = test_input($firstName);
-            $lastName  = test_input($lastName);
-            $gender = test_input($gender);
-            $dobN      = test_input($dobN);
-            $religion = test_input($religion);
-            $presentAdd= test_input($presentAdd);
-            $permanetAdd = test_input($permanetAdd);
-            $phoneNum  = test_input($phoneNum);
-            $email = test_input($email);
-			$userName = test_input($userName);
+			if(strlen($username) > 6){
+				$usernameErr = "Username can not be upper than 10 characters!";
+			$isValid = false;
+		}
+			if(strlen($password) > 8){
+				$passwordErr = "Password max size 8 characters!";
+			$isValid = false;
+		}
+		if($isValid){
+			$username = test_input($username);
 			$password = test_input($password);
 
-			$response = register($userName, $password);
+			$response = register($username, $password);
 			if($response) {
 				$successfulMessage = "Successfully saved.";
 			}
@@ -88,6 +43,7 @@
 			}
 		}
 	}
+}
 	function test_input($data) {
 			$data = trim($data);
 			$data = stripslashes($data);
@@ -106,79 +62,13 @@
 
 	<h1>Registration Form</h1>
 
-	<form action="" method="POST">
-		<fieldset>
-			<legend>Registration Form:</legend>
-
-			<label for="firstname">First Name:</label>
-			<input type="text" name="firstname" id="firstname">
-			<span style="color:red"><?php echo $firstNameErr; ?></span>
-
-			<br><br>
-
-			<label for="lastname">Last Name:</label>
-			<input type="text" name="lastname" id="lastname">
-			<span style="color:red"><?php echo $lastNameErr; ?></span>
-
-			<br><br>
-			<p> Gender </p> 
-	<input type="radio" id="male"name="gender"value="male">
-	<span><?php if(isset($radio_error))echo $radio_error; ?></span>
-	<label for="male">Male</label><br>
-	<input type="radio" id="female"name="gender"value="female">
-	<label for="female">Female</label>
-		 <span style="color:red"><?php echo $genderErr ?></span>
-		<br><br>
-			<label style="color:black" for="dob">Date of birth:</label>
- 	        <input type="date" id="dob"name="dob">
- 	        <span style="color:red"><?php echo $dobNErr; ?></span>	
- 	        <br><br>
- 	        <label style="color:black">Religion:</label> 
-                            <select name="religion"> 
-                                <option value="" selected disabled>--Select--</option>
-                                <option <?php echo $religion=='Muslim'?"selected":"" ?> value="Muslim">Muslim</option> 
-                                <option <?php echo $religion=='Hindu'?"selected":"" ?> value="bussiness">Hindu</option>
-                                <option <?php echo $religion=='Buddha'?"selected":"" ?> value="teacher">Buddha</option>
-                                <option <?php echo $religion=='Christian'?"selected":"" ?> value="teacher">Christian</option>
-                            </select> 
-                        
-                        <span style="color:red"><?php echo $religionErr ?></span>
-
- 	        <br><br>
-		</fieldset>
-		<fieldset>
-			<legend>Contact Infromation:</legend>
-
- 	        <label for="presentadd">Present Address:</label>
-			<input type="text" name="presentadd" id="presentadd">
-			<span style="color:red"><?php echo $presentAddErr; ?></span>
-
-			<br><br>
-
-			<label for="permanetadd">Permanent Address:</label>
-			<input type="text" name="permanetadd" id="permanetadd">
-			<span style="color:red"><?php echo $permanetAddErr; ?></span>
-
-			<br><br>
-
-			<label for="phonenum">Phone:</label>
-			<input type="tel" name="phonenum" id="phonenum">
-			<span style="color:red"><?php echo $phoneNumErr; ?></span>
-			<br><br>
-             <label for="email">Email:</label>
- 	         <input type="email" id="email"name="email">
- 	         <span style="color:red"><?php echo $emailErr; 
-
- 	         ?>
-			<br><br>
-			
- 	 </fieldset>
+	<form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="POST">
  	 <fieldset>
  	 	<legend>Account Information:</legend>
 
 			<label for="username">Username:</label>
-			<input type="text" name="username" id="username">
-			<span style="color:red"><?php echo $userNameErr; ?></span>
+			<input type="text" name="username" id="username" value="<?php echo $username; ?>">
+			<span style="color:red"><?php echo $usernameErr; ?></span>
 
 			<br><br>
 
@@ -189,7 +79,7 @@
 			
 </fieldset>
 <br><br>
-			<input type="submit" name="submit" value="Submit">
+			<input type="submit" name="submit" value="Register">
 		
 	</form>
 
