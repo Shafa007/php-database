@@ -1,28 +1,40 @@
 <?php 
-	include 'DBconnection.php';
-	$userName = $password = "";
+	require 'dbread.php';
+	$username = $password = "";
 	$isValid = true;
-	$userNameErr = $passwordErr = "";
+	$usernameErr = $passwordErr = "";
 	$successfulMessage = $errorMessage = "";
 	if($_SERVER['REQUEST_METHOD'] === "POST") {
-		$userName = $_POST['username'];
+		$username = $_POST['username'];
 		$password = $_POST['password'];
-		if(empty($userName)) {
-			$userNameErr = "User name can not be empty!";
+
+		if(empty($username)) {
+			$usernameErr = "Username can not be empty!";
 			$isValid = false;
 		}
 		if(empty($password)) {
 			$passwordErr = "Password can not be empty!";
 			$isValid = false;
 		}
+
 		if($isValid) {
-		$userName = test_input($userName);
+			if(strlen($username) > 7){
+				$usernameErr = "Username can not be upper than 10 characters!";
+			$isValid = false;
+		}
+			if(strlen($password) > 8){
+				$passwordErr = "Password max size 8 characters!";
+			$isValid = false;
+		}
+
+		if($isValid) {
+		$username = test_input($username);
 		$password = test_input($password);
 
-		$response = true;
+		$response = login($username, $password);
 		if($response){
         	session_start();
-        	$_SESSION['username'] = $userName;
+        	$_SESSION['username'] = $username;
         	header("Location: welcomepage.php");
         }	
             else{
@@ -31,12 +43,15 @@
 			
 		}
 	}
+}
+
 
 		function test_input($data) {
 			$data = trim($data);
 			$data = stripslashes($data);
 			$data = htmlspecialchars($data);
 			return $data;
+		}
 ?>
 <!DOCTYPE html>
 <html>
@@ -53,8 +68,8 @@
 			<legend>Login Form:</legend>
 
 			<label for="username">Username:</label>
-			<input type="text" name="username" id="username" value="<?php echo $uid; ?>">
-			<span style="color:red"><?php echo $userNameErr; ?></span>
+			<input type="text" name="username" id="username">
+			<span style="color:red"><?php echo $usernameErr; ?></span>
 
 			<br><br>
 
@@ -64,16 +79,14 @@
 
 			<br><br>
 
-			<input type="checkbox" name="rememberme" id="rememberme">
-			<label for="rememberme">Remember Me:</label>
-
-			<br><br>
-
 			<input type="submit" name="submit" value="Login">
 		</fieldset>
 	</form>
 
 	<br>
+
+	<p style="color:green;"><?php echo $successfulMessage; ?></p>
+	<p style="color:red;"><?php echo $errorMessage; ?></p>
 
 	<p>Don't have account? <a href="registration_form_db.php">Click here</a> for registration.</p>
 
