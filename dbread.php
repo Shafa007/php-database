@@ -1,14 +1,14 @@
 <?php 
 require 'DBconnection.php';
 
-    function register($userName, $password){
+    function login($username, $password){
     	$conn = connect();
-    	$sql = $conn -> prepare("INSERT INTO USER (username, password) VALUES (?,?)");
+    	$sql = $conn -> prepare("SELECT * FROM USERS WHERE username = ? and password = ?");
 
-    	$sql -> bind_param("ss", $userName, $password);
-    	$response = $sql -> execute();
-    	$conn->close();
-    	return $response;
+    	$sql -> bind_param("ss", $username, $password);
+    	$sql -> execute();
+        $res = $sql->get_result();
+        return $res->num_rows === 1;
     }
 
 ?>
